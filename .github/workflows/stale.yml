@@ -1,0 +1,30 @@
+name: Close stale 'waiting for user response' issues
+
+on:
+  schedule:
+    #        ┌───────────── minute (0 - 59)
+    #        │ ┌───────────── hour (0 - 23)
+    #        │ │ ┌───────────── day of the month (1 - 31)
+    #        │ │ │ ┌───────────── month (1 - 12 or JAN-DEC)
+    #        │ │ │ │ ┌───────────── day of the week (0 - 6 or SUN-SAT)
+    #        │ │ │ │ │
+    #        │ │ │ │ │
+    #        │ │ │ │ │
+    #        * * * * *
+    - cron: '*/1 * * * *'
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+
+    steps:
+      - uses: actions/stale@v5
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          days-before-issue-stale: 0
+          days-before-issue-close: 0
+          stale-issue-message: "Hey ${{ github.event.issue.user.login }}, this issue might need further attention.\n\n${{ github.event.issue.assignee.login }}, you can help us out by closing this issue if the problem no longer exists, or adding more information."
+          close-issue-message: "This issue was closed because it has been stalled for 30 days with no activity. If the issue still persists, please reopen with the information requested. Thanks."
+          any-of-labels: "waiting for response"
