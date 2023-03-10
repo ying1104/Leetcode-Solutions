@@ -27,8 +27,11 @@ jobs:
     permissions:
       issues: write
     steps:
-      - name: Add comment
+      - name: Check out the code
         uses: actions/checkout@v2
+
+      - name: Add assignee and author tags to issue comment
+        uses: peter-evans/create-issue-comment@v1
         with:
           issue-number: ${{ github.event.issue.number }}
           body: "This issue has been labeled with ${github.event.label.name} by @{$ {github.event.sender.login}}. Assignee is @{$ {github.event.issue.assignee.login}} and author is @{$ {github.event.issue.user.login}}."
