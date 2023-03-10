@@ -1,0 +1,35 @@
+name: Close stale 'waiting for user response' issues
+
+on:
+  issues:
+    types:
+      - labeled
+  workflow_dispatch:
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+
+    steps:
+      - name: Chceck for stale issues
+        uses: actions/stale@v5
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          days-before-issue-stale: 10
+          days-before-issue-close: 10
+          any-of-labels: "waiting for response"
+
+  add-comment:
+    if: github.event.label.name == 'Stale'
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Add comment
+        uses: actions/checkout@v2
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body: "This issue has been labeled with ${github.event.label.name} by @{$ {github.event.sender.login}}. Assignee is @{$ {github.event.issue.assignee.login}} and author is @{$ {github.event.issue.user.login}}."
+
